@@ -1,0 +1,45 @@
+using UnityEngine;
+
+//This class controls how the enemy behaves while moving towards a noise (player is not seen yet).
+public class MoveToNoiseState : BaseState, ICanBeDamaged
+{
+    public MoveToNoiseState(EnemyStateMachineController controller, EnemyStateFactory factory) : base(controller, factory)
+    {
+    }
+
+    public override void CheckSwitchState()
+    {
+
+    }
+
+    //Enter the state and set the navagent to move to the noise
+    public override void EnterState()
+    {
+        _controller.Agent.destination = _controller.Goal;
+        _controller.MyState = EnemyStateType.MoveToNoise;
+        Debug.Log("Moving to: x:" + _controller.Agent.destination.x + 
+                  " y: "+ _controller.Agent.destination.y + 
+                  " z: " + _controller.Agent.destination.z);
+    }
+
+    public override void ExitState()
+    {
+
+    }
+
+    //Called when the player knife hits the enemy from behind.
+    public void getBackStabbed()
+    {
+        this.SwitchState(_factory.KnifedState());
+    }
+
+    public override void InitializeSubState()
+    {
+
+    }
+
+    public override void UpdateState()
+    {
+
+    }
+}
