@@ -30,4 +30,14 @@ public class EnemyStateFactory
     {
         return new DeadState(_controller, this);
     }
+
+    public BaseState PursuitState()
+    {
+        return new PursuitState(_controller, this);
+    }
+
+    public BaseState AttackState()
+    {
+        return new AttackState(_controller, this);
+    }
 }

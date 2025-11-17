@@ -11,7 +11,12 @@ public class PatrolState : BaseState, ICanHear, ICanBeDamaged
 
     public override void CheckSwitchState()
     {
-
+        //Check if the player is seen
+        if (_controller.playerVision())
+        {
+            //Player was seen, switch to pursuit
+            this.SwitchState(_factory.PursuitState());
+        }
     }
 
     public override void EnterState()
@@ -41,6 +46,7 @@ public class PatrolState : BaseState, ICanHear, ICanBeDamaged
         waitTimer = 0f;
 
         _controller.Agent.destination = _controller.patrolPoints[currentIndex];
+        _controller.Renderer.material = _controller.SkinMaterial[0];
     }
 
     public override void ExitState()
@@ -91,6 +97,8 @@ public class PatrolState : BaseState, ICanHear, ICanBeDamaged
                 waitTimer = 0f;
             }
         }
+
+        CheckSwitchState();
     }
 
 }

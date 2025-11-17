@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     public float maxPitch = 60f;
     private float currentPitch = 0f;
 
+    //Combat variables
+    [SerializeField] private float _maxHealth = 100;
+    [SerializeField] private float _HP;
     [SerializeField] private float clapRange = 10.0f; //The range at which enemies can hear the "clap" noise the player emits
     [SerializeField] private float knifeRange = 3.0f; //The range at which the enemy detects knife swings.
     [SerializeField] private LayerMask enemyLayer = 1 << 6; //Used to make raycasts that only detect guards.
@@ -40,6 +43,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(activateControls());
 
         Cursor.lockState = CursorLockMode.Locked;
+        _HP = _maxHealth;
     }
 
     // Update is called once per frame
@@ -128,5 +132,11 @@ public class PlayerController : MonoBehaviour
         }
         // Draw ray in Scene view
         Debug.DrawRay(this.transform.position, this.transform.forward * knifeRange, Color.red, 100f);
+    }
+
+    //Function for taking damage
+    public void Damage(float damage)
+    {
+        _HP -= damage;
     }
 }
