@@ -38,6 +38,23 @@ public abstract class BaseState
 
         _controller.CurrentState = newState;
     }
+    //Overload to allow switching based on Enum
+    protected void SwitchState(EnemyStateType newStateNum)
+    {
+        ExitState();
+
+        BaseState newState = newStateNum switch
+        {
+            EnemyStateType.Idle => _factory.Idle(),
+            EnemyStateType.Patrol => _factory.Patrol(),
+            EnemyStateType.MoveToNoise => _factory.MoveToNoise(),
+            _ => _factory.Idle()
+        };
+
+        _controller.CurrentState = newState;
+
+        newState.EnterState();
+    }
 }
 
 //These Interfaces enable functionality that only some states use and other don't.

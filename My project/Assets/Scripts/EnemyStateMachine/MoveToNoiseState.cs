@@ -9,7 +9,12 @@ public class MoveToNoiseState : BaseState, ICanBeDamaged
 
     public override void CheckSwitchState()
     {
-
+        //Check if the player is seen
+        if (_controller.playerVision())
+        {
+            //Player was seen, switch to pursuit
+            this.SwitchState(_factory.PursuitState());
+        }
     }
 
     //Enter the state and set the navagent to move to the noise
@@ -40,6 +45,6 @@ public class MoveToNoiseState : BaseState, ICanBeDamaged
 
     public override void UpdateState()
     {
-
+        CheckSwitchState();
     }
 }

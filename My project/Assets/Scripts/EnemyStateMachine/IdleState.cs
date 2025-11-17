@@ -10,7 +10,12 @@ public class IdleState : BaseState, ICanBeDamaged, ICanHear
 
     public override void CheckSwitchState()
     {
-
+        //Check if the player is seen
+        if (_controller.playerVision())
+        {
+            //Player was seen, switch to pursuit
+            this.SwitchState(_factory.PursuitState());
+        }
     }
 
     //On entering state, update the agent destination to current position so the agent no longer moves
@@ -18,6 +23,7 @@ public class IdleState : BaseState, ICanBeDamaged, ICanHear
     {
         _controller.MyState = EnemyStateType.Idle;
         _controller.Agent.destination = _controller.Trans.position;
+        _controller.Renderer.material = _controller.SkinMaterial[0];
     }
 
     public override void ExitState()
@@ -32,6 +38,7 @@ public class IdleState : BaseState, ICanBeDamaged, ICanHear
 
     public override void UpdateState()
     {
+        CheckSwitchState();
     }
 
     //React to noises. Note: Idle state does not subscribe to noises, this is invoked by a the alert manager for better full scene control
