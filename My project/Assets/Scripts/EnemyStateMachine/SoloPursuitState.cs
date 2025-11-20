@@ -28,7 +28,9 @@ public class SoloPursuitState : BaseState
     {
         _controller.MyState = EnemyStateType.SoloPursuit;
         //We saw the player, and are moving to his last known location. Update accordingly
-        _controller.Goal = _controller.Player.position;
+        Vector3 offset = (Random.insideUnitSphere * 2f);
+        offset.y = 0;
+        _controller.Goal = _controller.Player.position + offset;
         _controller.Agent.destination = _controller.Goal;
 
         //For debug, go to new material
