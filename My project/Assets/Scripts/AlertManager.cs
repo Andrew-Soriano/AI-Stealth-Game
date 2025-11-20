@@ -6,6 +6,8 @@ public class AlertManager : MonoBehaviour
 {
     public static AlertManager instance { get; private set; } //This object is a singletone, this is the instance
     [SerializeField] private LayerMask enemyLayer = 1<<6; //Set to enemies in inspector, causes unity functions to only interact with guards
+    private GameObject[] _spawners;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -16,6 +18,9 @@ public class AlertManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        //Get all spwners in the scene
+        _spawners = GameObject.FindGameObjectsWithTag("Spawner");
     }
 
     //Subscribe to noise events
@@ -56,5 +61,30 @@ public class AlertManager : MonoBehaviour
         //Finding closest enemy, alert the enemy
         if (closestEnemy != null)
             closestEnemy.HearNoise(id, pos, radius);
+    }
+
+    //Used to find and trigger the nearest spawner. If spawner is available to activate it will, otherwise nothing happens
+    public void CallSpawner(Vector3 pos)
+    {
+        if (_spawners == null || _spawners.Length == 0)
+        {
+            Debug.LogWarning("No spawners found in scene!");
+            return;
+        }
+
+        EnemySpawnerController nearest = null;
+        float minDist = Mathf.Infinity;
+        foreach (GameObject obj in _spawners)
+        {
+            float dist = Vector3.Distance(pos, obj.transform.position);
+
+            if(dist < minDist)
+            {
+                nearest = obj.GetComponent<EnemySpawnerController>();
+                minDist = dist;
+            }
+        }
+
+        if (nearest != null && nearest.activated == 0) { nearest.spawnEnemies(pos); }
     }
 }

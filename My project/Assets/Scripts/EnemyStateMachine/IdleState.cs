@@ -14,7 +14,8 @@ public class IdleState : BaseState, ICanBeDamaged, ICanHear
         if (_controller.playerVision())
         {
             //Player was seen, switch to pursuit
-            this.SwitchState(_factory.PursuitState());
+            AlertManager.instance.CallSpawner(_controller.Trans.position); //Gets backup by triggering the nearest spawner to spawn enemies already in pursuit.
+            this.SwitchState(_factory.SoloPursuitState());
         }
     }
 

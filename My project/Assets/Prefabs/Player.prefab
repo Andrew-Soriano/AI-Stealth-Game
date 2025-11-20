@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 440972985169914909}
   m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -193,11 +193,19 @@ MonoBehaviour:
   look: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   attack: {fileID: 1120369429361536294, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   characterController: {fileID: 8863053568424131243}
+  controlCamera: 0
   cam: {fileID: 0}
   camTarget: {fileID: 4224554511528135296}
   lookSpeed: 2
   minPitch: -30
   maxPitch: 60
+  _maxHealth: 100
+  _HP: 0
+  clapRange: 10
+  knifeRange: 3
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1966935333283077485
 GameObject:
   m_ObjectHideFlags: 0
