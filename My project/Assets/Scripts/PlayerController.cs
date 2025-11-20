@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float clapRange = 10.0f; //The range at which enemies can hear the "clap" noise the player emits
     [SerializeField] private float knifeRange = 3.0f; //The range at which the enemy detects knife swings.
     [SerializeField] private LayerMask enemyLayer = 1 << 6; //Used to make raycasts that only detect guards.
+    public float HP { get => _HP; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
