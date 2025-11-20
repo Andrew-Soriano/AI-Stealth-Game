@@ -1,4 +1,6 @@
 //Used to generate new instances of states when the enemy switches their state.
+using UnityEngine;
+
 public class EnemyStateFactory
 {
     private EnemyStateMachineController _controller;
@@ -31,13 +33,36 @@ public class EnemyStateFactory
         return new DeadState(_controller, this);
     }
 
-    public BaseState PursuitState()
+    public BaseState SoloPursuitState()
     {
-        return new PursuitState(_controller, this);
+        return new SoloPursuitState(_controller, this);
     }
 
-    public BaseState AttackState()
+    public BaseState SoloAttackState()
     {
-        return new AttackState(_controller, this);
+        return new SoloAttackState(_controller, this);
+    }
+    public BaseState FormationPursuitState(Transform leader, Vector3 formationOffset)
+    {
+        return new FormationPursuitState(_controller, this, leader, formationOffset);
+    }
+
+    public BaseState FormationAttackState(Transform leader, Vector3 formationOffset)
+    {
+        return new FormationAttackState(_controller, this, leader, formationOffset);
+    }
+
+    public BaseState SpawnPursuitState(Vector3 pos, EnemySpawnerController spawner)
+    {
+        return new SpawnPursuitState (_controller, this, pos, spawner);
+    }
+
+    public BaseState SpawnAttackState(Vector3 pos, EnemySpawnerController spawner)
+    {
+        return new SpawnAttackState(_controller, this, pos, spawner);
+    }
+    public BaseState SpawnReturnState(Vector3 pos, EnemySpawnerController spawner)
+    {
+        return new SpawnReturnState(_controller, this, pos, spawner);
     }
 }

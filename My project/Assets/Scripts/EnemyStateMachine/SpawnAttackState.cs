@@ -1,23 +1,29 @@
 using UnityEngine;
 
 //State for shoot at the player. Enemy stops moving, aims, and shoots. Accuracy increases over time.
-public class AttackState : BaseState
+public class SpawnAttackState : BaseState
 {
     private bool _shooting = true; //Are we in the middle of taking a shot (multi-frame dependency)
     private float _attackTimer = 0; //Time between shots/taking shots
     private float _attackAccuracy; //Chance to hit on each shot. Goes up every time we shoot. Resets on entering state.
-    public AttackState(EnemyStateMachineController controller, EnemyStateFactory factory) : base(controller, factory)
+    private Vector3 _returnPos;
+    private EnemySpawnerController _spawner;
+
+    public SpawnAttackState(EnemyStateMachineController controller, EnemyStateFactory factory, Vector3 pos, EnemySpawnerController spawner)
+        : base(controller, factory)
     {
+        _returnPos = pos;
+        _spawner = spawner;
     }
 
     public override void CheckSwitchState()
     {
         //If the player is too far away and we are not in the middle of shooting, go back to pursuit
         if(!_shooting &&
-            Vector3.Distance(_controller.Trans.position, _controller.Player.position) < _controller.AttackRange)
+            Vector3.Distance(_controller.Trans.position, _controller.Player.position) > _controller.AttackRange)
         {
             //Switch to pursuit. Let the pursuit state decide when to go back to default
-            this.SwitchState(_factory.PursuitState());
+            this.SwitchState(_factory.SpawnPursuitState(_returnPos, _spawner));
         }
     }
 
@@ -54,6 +60,8 @@ public class AttackState : BaseState
             {
                 _attackAccuracy = 1.0f; //Accuracy cannot be greater than 100%
             }
+
+            _shooting = false; //Reset shots.
         } else {
             _attackTimer += Time.deltaTime;
             if (_attackTimer > _controller.AttackDelay) { _shooting = true; } //Time to shoot!

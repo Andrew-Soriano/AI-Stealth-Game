@@ -11,7 +11,9 @@ public enum EnemyStateType
     Patrol,
     MoveToNoise,
     Knifed,
-    Dead
+    Dead,
+    SoloPursuit,
+    SpawnPursuit
 }
 
 //Controls the enemy, including holding variables for use by enemy states, and handling functions from outside scripts that need to be intelligently routed to states.
@@ -47,7 +49,8 @@ public class EnemyStateMachineController : MonoBehaviour
     //OTHER
     private Transform _trans; //Our transform. Keeping a reference is slightly more CPU efficient than using this.transform
     [SerializeField] private List<Material> _skinMaterial; //A list of materials for states to switch to. Mostly used to debug in-progress behavior
-    private Renderer _renderer; //Our randerer. Ued to switch materials.
+    private Renderer _renderer; //Our renderer. Ued to switch materials.
+    public bool spawnedBySpawner = true; //Set to false in inspector to use default state
 
     //Getters and Setters
     public BaseState CurrentState { get => _currentState; set => _currentState = value; }
@@ -66,9 +69,9 @@ public class EnemyStateMachineController : MonoBehaviour
     public float BaseAccuracy { get => _baseAccuracy; }
     public float AttackDelay {  get => _attackDelay; }
     public float DamageValue {  get => _damageValue; }
+    public EnemyStateFactory StateFactory { get => _states; }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _states = new EnemyStateFactory(this);
@@ -82,19 +85,7 @@ public class EnemyStateMachineController : MonoBehaviour
 
         _HP = _maxHealth; //Default health to be full
 
-        //Switch immediately to our default state.
-        switch (_defaultState)
-        {
-            case EnemyStateType.Idle:
-                _currentState = _states.Idle();
-                break;
-            case EnemyStateType.Patrol:
-                _currentState = _states.Patrol();
-                break;
-            case EnemyStateType.MoveToNoise:
-                _currentState = _states.MoveToNoise();
-                break;
-        }
+        if (!spawnedBySpawner) { InitializeState(_defaultState); }
     }
 
     // Update is called once per frame
@@ -116,16 +107,13 @@ public class EnemyStateMachineController : MonoBehaviour
             Debug.DrawRay(transform.position, playerDir * playerDist, Color.red);
             //Check if something blocks vision
             if (!Physics.Raycast(_trans.position, playerDir, playerDist, _wallMask)) {
-                Debug.Log("I see the Player!");
                 return true;
             }
             else {
-                Debug.Log("Player is Behind Obstacle");
                 return false;
             }
         }
         else {
-            Debug.Log("Player not in Cone or Range");
             return false;
         }
     }
@@ -133,6 +121,7 @@ public class EnemyStateMachineController : MonoBehaviour
     //Function to determine if the agent's destintion is reached
     public bool HasReachedDestination()
     {
+        if (_agent.pathStatus == NavMeshPathStatus.PathInvalid) return false; // Cannot reach target
         // No path yet
         if (!_agent.pathPending)
         {
@@ -140,7 +129,7 @@ public class EnemyStateMachineController : MonoBehaviour
             if (_agent.remainingDistance <= _agent.stoppingDistance)
             {
                 // Either stopped moving or has no path left
-                if (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f)
+                if (!_agent.hasPath || _agent.velocity.sqrMagnitude <= 0.1f)
                 {
                     return true;
                 }
@@ -188,5 +177,54 @@ public class EnemyStateMachineController : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + leftBoundary * _visionRange);
         Gizmos.DrawLine(transform.position, transform.position + rightBoundary * _visionRange);
+    }
+
+    // Initialize method for external spawners
+    public void InitializeState(EnemyStateType state)
+    {
+        switch (state)
+        {
+            case EnemyStateType.Idle:
+                _currentState = _states.Idle();
+                break;
+            case EnemyStateType.Patrol:
+                _currentState = _states.Patrol();
+                break;
+            case EnemyStateType.MoveToNoise:
+                _currentState = _states.MoveToNoise();
+                break;
+            case EnemyStateType.SoloPursuit:
+                _currentState = _states.SoloPursuitState();
+                break;
+        }
+
+        _currentState.EnterState();
+    }
+
+    //Initialize as a spawn pursuit state
+    public void InitializeSpawnerState(Vector3 pos, EnemySpawnerController spawner)
+    {
+        _currentState = _states.SpawnPursuitState(pos, spawner);
+        _currentState.EnterState();
+    }
+
+    /*public void InitializeFormationState(Transform leader, Vector3 offset)
+    {
+        CurrentState = _states.FormationPursuitState(leader, offset);
+        CurrentState.EnterState();
+    }*/
+
+    //Used to spawn enemies in other scipts.
+    public static EnemyStateMachineController SpawnEnemy(GameObject prefab, Vector3 pos, Quaternion rot)
+    {
+        GameObject go = Instantiate(prefab, pos, rot);
+        EnemyStateMachineController controller = go.GetComponent<EnemyStateMachineController>();
+        return controller;
+    }
+
+    //USed to destroy this object
+    public void destroySelf()
+    {
+        Destroy(gameObject);
     }
 }

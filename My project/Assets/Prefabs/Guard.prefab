@@ -391,6 +391,7 @@ GameObject:
   - component: {fileID: 7370954863654585849}
   - component: {fileID: 5435507972341531999}
   - component: {fileID: 6572119325981440274}
+  - component: {fileID: 6583392228936593194}
   m_Layer: 6
   m_Name: Guard
   m_TagString: Untagged
@@ -539,12 +540,26 @@ MonoBehaviour:
   - {x: -3, y: 0.1, z: -7.34}
   - {x: -9, y: 0.1, z: -19}
   _patrolWait: 2
-  _defaultState: 1
+  _defaultState: 0
   _myState: 0
+  _visionAngle: 90
+  _visionRange: 10
+  _attackRange: 5
+  _wallMask:
+    serializedVersion: 2
+    m_Bits: 256
+  _maxHealth: 100
+  _HP: 0
+  _baseAccuracy: 0.25
+  _attackDelay: 1
+  _damageValue: 10
   _skinMaterial:
   - {fileID: 2100000, guid: 3cc75e6110d9e3d4aa71707e010902e8, type: 2}
   - {fileID: 2100000, guid: 539dd75f48c20e54cb478e989091c2b6, type: 2}
   - {fileID: 2100000, guid: 9cc3b2fdc71854d46a13b96ca184bcd5, type: 2}
+  - {fileID: 2100000, guid: 042b0566a50a76646bb46a3547db7d58, type: 2}
+  - {fileID: 2100000, guid: ec62679cc67f89743aa5cb5806059d66, type: 2}
+  spawnedBySpawner: 0
 --- !u!195 &6572119325981440274
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -567,6 +582,26 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6583392228936593194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8025588828804603101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &8548595989383599629
 GameObject:
   m_ObjectHideFlags: 0
